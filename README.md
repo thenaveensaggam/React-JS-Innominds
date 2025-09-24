@@ -17,3 +17,8 @@ cd first-app
 
 # Install dependencies
 npm install
+
+## 🚀 2. Install Tailwind CSS
+# follow this link, https://tailwindcss.com/docs/installation/using-vite
+
+
