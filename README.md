@@ -10,10 +10,10 @@ Run the following commands in your terminal:
 
 ```bash
 # Create a new project using Vite
-npm create vite@latest my-app
+npm create vite@latest first-app
 
 # Navigate into the project
-cd my-app
+cd first-app
 
 # Install dependencies
 npm install
