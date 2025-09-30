@@ -1,0 +1,60 @@
+{
+  "contacts": [
+    {
+      "name": "Vladeen",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s",
+      "mobile": "900079900",
+      "email": "vladeen@gmail.com",
+      "company": "BHEL Electronics",
+      "title": "Electrician",
+      "groupId": "2",
+      "id": "UyEDV5Yds"
+    },
+    {
+      "name": "Rolex",
+      "imageUrl": "https://cdn-icons-png.flaticon.com/512/219/219988.png",
+      "mobile": "9098789098",
+      "email": "rolex.don@gmail.com",
+      "company": "DAZN",
+      "title": "Head Don",
+      "groupId": "6",
+      "id": "3uiwIed"
+    },
+    {
+      "name": "Naveen",
+      "imageUrl": "https://www.pikpng.com/pngl/b/417-4172348_testimonial-user-icon-color-clipart.png",
+      "mobile": "09381297402",
+      "email": "naveen@gmail.com",
+      "company": "innominds",
+      "title": "Senior Engineer",
+      "groupId": "1",
+      "id": "u9dpSzA"
+    }
+  ],
+  "groups": [
+    {
+      "id": "1",
+      "name": "Colleague"
+    },
+    {
+      "id": "2",
+      "name": "Friend"
+    },
+    {
+      "id": "3",
+      "name": "Family"
+    },
+    {
+      "id": "4",
+      "name": "Service"
+    },
+    {
+      "id": "5",
+      "name": "Community"
+    },
+    {
+      "id": "6",
+      "name": "Social"
+    }
+  ]
+}
