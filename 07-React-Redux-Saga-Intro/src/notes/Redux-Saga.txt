@@ -1,0 +1,408 @@
+------------------------------------
+Redux Toolkit with Saga middleware 
+------------------------------------
+npm install @reduxjs/toolkit redux-logger redux-saga react-redux 
+
+-> create a store 
+-> root Reducer 
+-> Configure the Store with App 
+-> Create Slices
+-> Use Store in React Component 
+
+store.js 
+--------
+import {configureStore} from "@reduxjs/toolkit";
+import logger from "redux-logger";
+import {thunk} from "redux-thunk";
+import rootReducer from "./rootReducer.js";
+import createSagaMiddleware from "redux-saga";
+import rootSaga from "./root.saga.js";
+
+
+const sagaMiddleware = createSagaMiddleware();
+const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(sagaMiddleware, logger)
+});
+
+sagaMiddleware.run(rootSaga);
+export default store;
+
+rootSaga.js
+-----------
+import {all} from "redux-saga/effects";
+import usersSaga from "./users/user.saga.js";
+
+export default function* rootSaga() {
+    yield all([usersSaga()]);
+}
+
+rootReducer.js 
+--------------
+import {combineReducers} from "@reduxjs/toolkit";
+import counterSlice, {counterFeatureKey} from "./counter/counter.slice.js";
+import productSlice, {productFeatureKey} from "./product/product.slice.js";
+import cartSlice, {cartFeatureKey} from "./shopping-cart/shopping-cart.slice.js";
+import userSlice, {userFeatureKey} from "./users/user.slice.js";
+
+const rootReducer = combineReducers({
+    [counterFeatureKey]: counterSlice.reducer,
+    [productFeatureKey]: productSlice.reducer,
+    [cartFeatureKey]: cartSlice.reducer,
+    [userFeatureKey]: userSlice.reducer
+})
+export default rootReducer;
+
+counter.slice.js 
+-----------------
+import {createSlice} from "@reduxjs/toolkit";
+
+
+export const counterFeatureKey = 'counterKey';
+
+const initialState = {
+    count: 0
+}
+
+const counterSlice = createSlice({
+    name: 'counter',
+    initialState: initialState,
+    reducers: {
+        incrementAction: (state, action) => {
+            state.count += 1;
+        },
+        incrementByAction: (state, action) => {
+            state.count += action.payload.value;
+        },
+        decrementAction: (state, action) => {
+            state.count -= 1;
+        },
+        decrementByAction: (state, action) => {
+            state.count -= action.payload.value;
+        }
+    }
+});
+export const {incrementAction, incrementByAction, decrementAction, decrementByAction} = counterSlice.actions;
+export default counterSlice;
+
+CounterRedux.jsx 
+-----------------
+const dispatch = useDispatch();
+
+    // to read the counter data from the redux store
+    const storeData = useSelector((state) => {
+        return state[counterFeatureKey];
+    });
+
+    const {count} = storeData;
+
+    const increment = () => {
+        dispatch({
+            type: `${counterSlice.actions.incrementAction}`
+        })
+    };
+
+    const incrementBy = (value) => {
+        dispatch({
+            type: `${counterSlice.actions.incrementByAction}`,
+            payload: {
+                value: value
+            }
+        })
+    };
+	
+
+product.slice.js 
+-----------------
+import {createSlice} from "@reduxjs/toolkit";
+
+export const productFeatureKey = 'productKey';
+
+const initialState = {
+    product: {
+        id: 12,
+        name: "Smart Watch",
+        imageUrl: "https://m.media-amazon.com/images/I/61ZjlBOp+rL.jpg",
+        qty: 1,
+        price: 14000
+    }
+}
+
+const productSlice = createSlice({
+    name: 'product',
+    initialState: initialState,
+    reducers: {
+        incrementQtyAction: (state, action) => {
+            state.product.qty = state.product.qty + 1;
+        },
+
+        decrementQtyAction: (state, action) => {
+            state.product.qty = state.product.qty - 1 > 0 ? state.product.qty - 1 : 1;
+        }
+    }
+});
+export const {incrementQtyAction, decrementQtyAction} = productSlice.actions;
+export default productSlice;
+
+ProductRedux.jsx 
+----------------
+ const dispatch = useDispatch();
+    // get data from redux
+    const productData = useSelector(state => {
+        return state[productFeatureKey];
+    });
+
+    const {product} = productData;
+
+
+    const incrementQty = () => {
+        dispatch({
+            type: `${productSlice.actions.incrementQtyAction}`
+        })
+    };
+
+    const decrementQty = () => {
+        dispatch({
+            type: `${productSlice.actions.decrementQtyAction}`
+        })
+    };
+
+shoppingCart.slice.js 
+----------------------
+import {createSlice} from "@reduxjs/toolkit";
+import {ProductService} from "../../services/ProductService.js";
+
+
+export const cartFeatureKey = 'cartKey';
+
+const initialState = {
+    products: ProductService.getProducts()
+}
+
+const cartSlice = createSlice({
+    name: 'cart',
+    initialState: initialState,
+    reducers: {
+        incrementQtyAction: (state, action) => {
+            state.products = state.products.map(product => {
+                if (product.id === action.payload.productId) {
+                    return {
+                        ...product,
+                        qty: product.qty + 1
+                    }
+                } else {
+                    return product;
+                }
+            });
+        },
+        decrementQtyAction: (state, action) => {
+            state.products = state.products.map(product => {
+                if (product.id === action.payload.productId) {
+                    return {
+                        ...product,
+                        qty: product.qty - 1 > 0 ? product.qty - 1 : 1
+                    }
+                } else {
+                    return product;
+                }
+            });
+        },
+        deleteProductAction: (state, action) => {
+            state.products = state.products.filter(product => product.id !== action.payload.productId)
+        }
+    }
+});
+export const {incrementQtyAction, decrementQtyAction, deleteProductAction} = cartSlice.actions;
+export default cartSlice;
+
+ShoppingCartRedux.jsx 
+----------------------
+ const dispatch = useDispatch();
+    // get data from redux store
+    const cartData = useSelector(state => {
+        return state[cartFeatureKey];
+    });
+
+    const {products} = cartData;
+
+    const incrementQty = (productId) => {
+        dispatch({
+            type: `${cartSlice.actions.incrementQtyAction}`,
+            payload: {
+                productId: productId
+            }
+        })
+    };
+
+    const decrementQty = (productId) => {
+        dispatch({
+            type: `${cartSlice.actions.decrementQtyAction}`,
+            payload: {
+                productId: productId
+            }
+        })
+    };
+
+    const clickDelete = (productId) => {
+        dispatch({
+            type: `${cartSlice.actions.deleteProductAction}`,
+            payload: {
+                productId: productId
+            }
+        })
+    };
+
+    const calculateGrandTotal = () => {
+        /*let total = 0;
+        for(let product of contacts){
+            total += (product.qty * product.price);
+        }
+        return total;*/
+
+        if (products) {
+            return products.reduce((accu, currentValue) => accu + (currentValue.qty * currentValue.price), 0)
+        } else return 0;
+
+    };
+
+users.saga.js 
+--------------
+import {takeLatest, call, put} from "redux-saga/effects";
+import {userActions} from "./user.slice.js";
+import UserService from "../../services/userService.js";
+
+function* getAllUsers(){
+    try{
+        const response = yield call(UserService.getAllUsers);
+        if(response.status === 200) {
+            yield put(userActions.getAllUsersSuccess(response.data));
+        }
+    }
+    catch(err){
+        yield put(userActions.getAllUsersFailure(err));
+    }
+}
+
+function* getUser(action){
+    try{
+        const response = yield call(UserService.getUser, action.payload.userId);
+        if(response.status === 200) {
+            yield put(userActions.getUserSuccess(response.data));
+        }
+    }
+    catch(err){
+        yield put(userActions.getUserFailure(err));
+    }
+}
+
+export default function* usersSaga() {
+    yield takeLatest(userActions.getAllUsers, getAllUsers)
+    yield takeLatest(userActions.getUser, getUser)
+}
+
+users.slice.js 
+---------------
+import {createSlice} from "@reduxjs/toolkit";
+
+export const userFeatureKey = 'userKey';
+
+const initialState = {
+    loading: false,
+    users: [],
+    errorMessage: null,
+    user: {}
+}
+
+const userSlice = createSlice({
+    name: 'users',
+    initialState: initialState,
+    reducers: {
+        // get all users data
+       getAllUsers: (state, action) => {
+           console.log("get all users: ", action.payload);
+           state.loading = true;
+       },
+        getAllUsersSuccess: (state, action) => {
+            console.log("get all users Success: ", action.payload);
+            state.loading = false;
+            state.users = action.payload;
+        },
+        getAllUsersFailure: (state, action) => {
+            state.loading = false;
+            state.errorMessage = action.error;
+        },
+        // get a user data
+        getUser: (state) => {
+            state.loading = true;
+        },
+        getUserSuccess: (state, action) => {
+            state.loading = false;
+            state.user = action.payload;
+        },
+        getUserFailure: (state, action) => {
+            state.loading = false;
+            state.errorMessage = action.error;
+        }
+    }
+});
+export const userActions = userSlice.actions;
+
+UsersRedux.jsx 
+---------------
+ const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // get the users data from server
+    const usersData = useSelector(state => {
+        return state[userFeatureKey];
+    });
+
+    useEffect(() => {
+        dispatch(userActions.getAllUsers());
+    }, [])
+
+
+    const {loading, users, errorMessage} = usersData;
+
+    const backToHome = () => {
+        navigate("/");
+    };
+
+    if (loading) {
+        return <PageLoader/>
+    }
+
+    if (!loading && errorMessage) {
+        return <ErrorMessage message={errorMessage.message}/>
+    }
+	
+UserItemRedux.jsx
+------------------
+ const dispatch = useDispatch();
+    const params = useParams();
+    const navigate = useNavigate();
+
+    // get data from server
+    const userData = useSelector(state => {
+        return state[userFeatureKey]
+    })
+
+    const {loading, user, errorMessage} = userData;
+
+    useEffect(() => {
+        if (params && params.userId) {
+            dispatch(userActions.getUser({userId: params.userId}));
+        }
+    }, [params.userId])
+
+    const backToUsers = () => {
+        navigate("/users");
+    }
+
+    if (loading) {
+        return <PageLoader/>
+    }
+
+    if (!loading && errorMessage) {
+        return <ErrorMessage message={errorMessage.message}/>
+    }

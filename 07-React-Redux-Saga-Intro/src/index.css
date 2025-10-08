@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+body {
+  background-color: #f4eccd !important;
+}
+
+.landing-page {
+  background: white url("assets/social-1.jpg") no-repeat scroll center;
+  height: 100vh;
+  background-size: cover;
+  color: white;
+}
+
+.wrapper {
+  background-color: rgba(0, 0, 0, 0.7);
+  height: 100%;
+}
+
+.loading-spinner {
+  position: fixed;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
+.loading-spinner img {
+  display: block;
+}
