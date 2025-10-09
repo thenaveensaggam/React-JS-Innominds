@@ -1,12 +1,13 @@
 import React from "react";
 import Product from "../components/Product.jsx";
+import ProductRedux from "../components/ProductRedux.jsx";
 
 const About = () => {
   return (
     <>
       <section className="container mx-auto px-4 py-16 flex items-center">
         <div className="w-1/2 pl-12">
-          <Product />
+          <ProductRedux />
         </div>
 
         <div className="w-1/2">

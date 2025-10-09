@@ -8,6 +8,7 @@ import Users from "./pages/Users.jsx";
 import UserItem from "./pages/UserItem.jsx";
 import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
+import UsersRedux from "./pages/UsersRedux.jsx";
 
 const App = () => {
   return (
@@ -18,7 +19,7 @@ const App = () => {
           <Route path={"/"} element={<Home />} />
           <Route path={"/about"} element={<About />} />
           <Route path={"/contact"} element={<Contact />} />
-          <Route path={"/users"} element={<Users />} />
+          <Route path={"/users"} element={<UsersRedux />} />
           <Route path={"/users/:userId"} element={<UserItem />} />
           <Route path={"/*"} element={<NotFound />} />
         </Routes>
